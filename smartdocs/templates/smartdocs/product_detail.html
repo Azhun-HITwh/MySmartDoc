@@ -1,0 +1,85 @@
+{% extends "smartdocs/base.html" %}
+
+{% block content %}
+<h3>
+  {{ product.name }} - {{ product.code }} - 所有文档
+</h3>
+
+{% if product.documents.all %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>标题</th>
+            <th>类别</th>
+             <th>格式</th>
+             <th>大小</th>
+            <th>版本</th>
+            <th>修改日期</th>
+            <th>详情</th>
+            <th>下载</th>
+        </tr>
+    </thead>
+    <tbody>
+     {% for document in product.documents.all %}
+        <tr>
+            <td>
+            {{ document.title }}
+            </td>
+            <td>
+            {{ document.category.name }}
+            </td>
+             <td>
+            {{ document.get_format }}
+            </td>
+             <td>
+            {{ document.doc_file.size | filesizeformat }}
+            </td>
+               <td>
+            {{ document.version_no }}
+            </td>
+           <td>
+            {{ document.mod_date | date:"Y-m-d" }}
+            </td>
+             <td>
+                <a href="{% url 'smartdocs:document_detail' document.product.id document.id %}"><span class="glyphicon glyphicon-eye-open"></span></a>
+            </td>
+             <td>
+                <a href="{{ document.doc_file.url }}"><span class="glyphicon glyphicon-download"></span></a>
+            </td>
+     {% endfor %}
+        </tr>
+    </tbody>
+</table>
+{% else %}
+<p>对不起，没有文档。</p>
+{% endif %}
+
+
+{% if request.user.is_authenticated %}
+
+<p>
+   {% if perms.smartdocs.add_document %}
+  <span class="glyphicon glyphicon-plus"></span>
+    <a href="{% url 'smartdocs:document_create' product.id %}">上传文档</a> |
+    {% endif %}
+
+    {% if perms.smartdocs.add_product %}
+  <span class="glyphicon glyphicon-plus"></span> <a href="{% url 'smartdocs:product_create' %}">添加产品</a>
+    {% endif %}
+
+  {% if request.user == product.author %}
+   | <span class="glyphicon glyphicon-wrench"></span> <a href="{% url 'smartdocs:product_update' product.id %}">编辑产品</a>
+  {% endif %}
+
+</p>
+{% else %}
+<p>请先<a href="{% url 'account_login' %}?next={% url 'smartdocs:product_detail' product.id %}">登录</a>添加产品，编辑产品或上传文档。</p>
+{% endif %}
+
+<p><a href="{% url 'smartdocs:product_list' %}">查看全部产品</a> | <a href="{% url 'smartdocs:category_list' %}">查看全部类别</a>
+| <a href="{% url 'smartdocs:document_list' %}">查看全部文档</a> | <a href="{% url 'smartdocs:object_list' %}">查看全部相关零件</a>
+    | <a href="{% url 'smartdocs:manufacturer_list' %}">查看全部制造商</a>| <a href="{% url 'smartdocs:doc_issued_by_list' %}">查看全部文档发布者</a>
+</p>
+
+{% endblock %}
+

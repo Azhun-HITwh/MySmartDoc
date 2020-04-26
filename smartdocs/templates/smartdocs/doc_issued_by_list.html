@@ -1,0 +1,61 @@
+{% extends "smartdocs/base.html" %}
+
+{% block content %}
+
+
+<h3>全部文档发布者列表</h3>
+
+{% if doc_issued_by_list %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>文档发布者</th>
+            <th>文档总数</th>
+            <th>最后修改</th>
+            <th>作者</th>
+            <th>详情</th>
+        </tr>
+    </thead>
+    <tbody>
+     {% for doc_issued_by in doc_issued_by_list %}
+        <tr>
+            <td>
+            {{ doc_issued_by.name }}
+            </td>
+              <td>
+            {{ doc_issued_by.document_count }}
+            </td>
+              <td>
+            {{ doc_issued_by.mod_date | date:"Y-m-d" }}
+            </td>
+             <td>
+            {{ doc_issued_by.author.username }}
+            </td>
+
+             <td>
+                 <a href="{% url 'smartdocs:doc_issued_by_detail' doc_issued_by.id %}"><span class="glyphicon glyphicon-eye-open"></span></a>
+            </td>
+
+     {% endfor %}
+        </tr>
+    </tbody>
+</table>
+{% else %}
+<p>对不起，没有文档发布者。</p>
+{% endif %}
+
+
+ {% if request.user.is_authenticated %}
+<p><span class="glyphicon glyphicon-plus"></span> <a href="{% url 'smartdocs:doc_issued_by_create' %}">添加文档发布者</a></p>
+ {% else %}
+
+<p>请<a href="{% url 'account_login' %}?next={% url 'smartdocs:doc_issued_by_create' %}">登录</a>后添加文档发布者。</p>
+  {% endif %}
+
+<p><a href="{% url 'smartdocs:product_list' %}">查看全部产品</a> | <a href="{% url 'smartdocs:category_list' %}">查看全部类别</a>
+| <a href="{% url 'smartdocs:document_list' %}">查看全部文档</a> | <a href="{% url 'smartdocs:object_list' %}">查看全部相关零件</a>
+| <a href="{% url 'smartdocs:manufacturer_list' %}">查看全部制造商</a>| <a href="{% url 'smartdocs:doc_issued_by_list' %}">查看全部文档发布者</a>
+</p>
+
+{% endblock %}
+

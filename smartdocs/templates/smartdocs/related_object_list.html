@@ -1,0 +1,61 @@
+{% extends "smartdocs/base.html" %}
+
+{% block content %}
+
+
+<h3>全部相关零件列表</h3>
+
+{% if related_object_list %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>零件名</th>
+            <th>文档总数</th>
+            <th>最后修改</th>
+            <th>作者</th>
+            <th>详情</th>
+        </tr>
+    </thead>
+    <tbody>
+     {% for object in related_object_list %}
+        <tr>
+            <td>
+            {{ object.name }}
+            </td>
+              <td>
+            {{ object.document_count }}
+            </td>
+              <td>
+            {{ object.mod_date | date:"Y-m-d" }}
+            </td>
+             <td>
+            {{ object.author.username }}
+            </td>
+
+             <td>
+                 <a href="{% url 'smartdocs:object_detail' object.id %}"><span class="glyphicon glyphicon-eye-open"></span></a>
+            </td>
+
+     {% endfor %}
+        </tr>
+    </tbody>
+</table>
+{% else %}
+<p>对不起，没有类别。</p>
+{% endif %}
+
+
+ {% if request.user.is_authenticated %}
+<p><span class="glyphicon glyphicon-plus"></span> <a href="{% url 'smartdocs:object_create' %}">添加相关零件</a></p>
+ {% else %}
+
+<p>请<a href="{% url 'account_login' %}?next={% url 'smartdocs:object_create' %}">登录</a>后添加相关零件。</p>
+  {% endif %}
+
+<p><a href="{% url 'smartdocs:product_list' %}">查看全部产品</a> | <a href="{% url 'smartdocs:category_list' %}">查看全部类别</a>
+| <a href="{% url 'smartdocs:document_list' %}">查看全部文档</a> | <a href="{% url 'smartdocs:object_list' %}">查看全部相关零件</a>
+    | <a href="{% url 'smartdocs:manufacturer_list' %}">查看全部制造商</a>| <a href="{% url 'smartdocs:doc_issued_by_list' %}">查看全部文档发布者</a>
+</p>
+
+{% endblock %}
+
